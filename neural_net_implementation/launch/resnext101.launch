@@ -1,0 +1,3 @@
+<launch>
+    <node name="resnext101" pkg="neural_net_implementation" type="resnext101_node.py" output="screen" />
+</launch>
