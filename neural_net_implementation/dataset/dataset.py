@@ -8,7 +8,7 @@ import open3d as o3d
 import numpy as np
 
 
-IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/Paper_Dataset"
+IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/MA_Heinemann_Dataset/000_All_data/001_Real"
 
 SCALING = True
 
@@ -71,6 +71,9 @@ class SeedlingData (data.Dataset):
             color = cv.imread(color_path, cv.IMREAD_COLOR)
 
             pc = self.create_point_cloud(DEPTH_IN_PARAMS, depth[:,:].astype(np.uint16)) * scaling_factor
+
+            # remove distance to camera
+            pc[:,:,2] -= np.mean(pc[:,:,2])
 
             depth = cv.resize(pc, [224, 224])     
             color = cv.resize(color, [224, 224])
