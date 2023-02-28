@@ -17,7 +17,7 @@ import open3d as o3d
 from cv_bridge import CvBridge
 import cv2 as cv
 
-MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/resnext101_set2_final_best.pth"
+MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/rgbd_weight_estimation/resnext101_paper_final_best.pth"
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 loss_func = nn.MSELoss()
 

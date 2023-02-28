@@ -18,7 +18,7 @@ BATCH_SIZE = 32
 EPOCHS = 200
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-RETRAIN = False
+RETRAIN = True
 MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set1_final_best.pth"
 
 # Read data
@@ -108,7 +108,7 @@ def validate_model(net, device, test_loader, epoch):
 
 # train
 best_acc = 0
-model_name = "resnext101_onlyReal"
+model_name = "resnext101_paper"
 training_sequence = "final"
 offset = 0
 for epoch in range(1+offset, EPOCHS + 1+offset):

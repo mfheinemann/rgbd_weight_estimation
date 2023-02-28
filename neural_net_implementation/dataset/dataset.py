@@ -8,7 +8,10 @@ import open3d as o3d
 import numpy as np
 
 
-IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/MA_Heinemann_Dataset/000_All_data/001_Real"
+# IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/Paper_Dataset/001_Train"
+IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/Paper_Dataset/002_Eval"
+# IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/Paper_Dataset/002_Eval/003_Pear/030_Pear_3"
+
 
 SCALING = True
 
@@ -25,11 +28,13 @@ DEPTH_IN_PARAMS = np.array([[DEPTH_FX, 0, DEPTH_CX], [0, DEPTH_FY, DEPTH_CY], [0
 
 class SeedlingData (data.Dataset):
 
-    def __init__(self, root=IMAGE_PATH_ROOT, train=True, eval=False, split=True):
+    def __init__(self, root=IMAGE_PATH_ROOT, train=True, eval=False, split=True, data_augment=True):
 
         paths = list()
         for path, _, files in os.walk(root):
             paths += [os.path.join(path, f[:-4]) for f in files if fnmatch.fnmatch(f, '*[0-9][0-9][0-9].png')]
+
+        self.data_augment = data_augment
 
         if split:
             # for training
@@ -53,17 +58,35 @@ class SeedlingData (data.Dataset):
         labels = list()
         with open(label_path) as json_file:
             data = json.load(json_file)
-            labels = [float(data[os.path.basename(f)[:-6]]) for f in files]
+            labels = [float(data[os.path.basename(f)[:-7]]) for f in files]
 
         self.labels = labels
 
+        # for color_path in self.color_images:
+        #     roi_path = os.path.dirname(color_path) + '/roi.json'
+        #     print(roi_path)
+        #     with open(roi_path, 'r') as json_file:
+        #         filedata = json_file.read()
+
+        #     # Replace the target string
+        #     filedata = filedata.replace('}{', ',')
+
+        #     with open(roi_path, 'w') as file:
+        #         file.write(filedata)
+
+        print("correct!")
+
+
     def __getitem__(self, index):
 
-        scaling_factor = np.min(SCALING_RANGE) + ((np.max(SCALING_RANGE) - np.min(SCALING_RANGE)) * np.array(np.random.rand()).round(3))
+        if self.data_augment:
+            scaling_factor = np.min(SCALING_RANGE) + ((np.max(SCALING_RANGE) - np.min(SCALING_RANGE)) * np.array(np.random.rand()).round(3))
+        else:
+            scaling_factor = 1.0
 
         label = torch.as_tensor([self.labels[index]]) * scaling_factor
 
-        def processing(idx, scaling_factor):
+        def processing(idx, scaling_factor, data_augment):
             depth_path = self.depth_images[idx]
             color_path = self.color_images[idx]
             depth = cv.imread(depth_path, cv.IMREAD_ANYDEPTH)
@@ -75,7 +98,27 @@ class SeedlingData (data.Dataset):
             # remove distance to camera
             pc[:,:,2] -= np.mean(pc[:,:,2])
 
-            depth = cv.resize(pc, [224, 224])     
+            if data_augment:
+                roi_path = os.path.dirname(color_path) + '/roi.json'
+
+                with open(roi_path) as json_file:
+                    data = json.load(json_file)
+                    roi = np.asarray(data[os.path.basename(color_path)[:-4]])
+
+                x1 = np.min([roi[0], roi[2]])
+                y1 = np.min([roi[1], roi[3]])
+                x2 = np.max([roi[0], roi[2]])
+                y2 = np.max([roi[1], roi[3]])
+
+                left = np.random.randint(0, int(x1))
+                right = np.random.randint(int(x2), pc.shape[1])
+                top = np.random.randint(0, int(y1))
+                bottom = np.random.randint(int(y2), pc.shape[0])
+
+                pc = pc[left:right, top:bottom, :]
+                color = color[left:right, top:bottom, :]
+
+            depth = cv.resize(pc, [224, 224])
             color = cv.resize(color, [224, 224])
 
             depth = np.reshape(depth, [3, 224, 224])     
@@ -87,13 +130,13 @@ class SeedlingData (data.Dataset):
             return depth, color
             
         try:
-            depth, color = processing(index, scaling_factor)
+            depth, color = processing(index, scaling_factor, self.data_augment)
 
         except:
             # in case image may be corrupted, just use the image before again to proceed training
             print(self.depth_images[index])
             print(self.color_images[index])
-            depth, color = processing(index-1)
+            depth, color = processing(index-1, scaling_factor, self.data_augment)
 
         data = torch.empty(color.size(dim=0)+depth.size(dim=0), color.size(dim=1), color.size(dim=2))
         data[:3, :, :] = color
@@ -123,7 +166,7 @@ class SeedlingData (data.Dataset):
 if __name__ == "__main__":
     dataset_test = SeedlingData(train=False, eval=False)
     rnd_idx = np.random.randint(0, len(dataset_test)-1)
-    rnd_idx = 5996
+    # rnd_idx = 5996
     print(rnd_idx)
 
     img, label = dataset_test[rnd_idx]

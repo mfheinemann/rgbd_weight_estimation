@@ -23,7 +23,7 @@ BATCH_SIZE = 1
 EPOCHS = 100
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/resnext101_allData_final_best.pth"
+MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/rgbd_weight_estimation/resnext101_paper_final_best.pth"
 
 # Read data
 dataset_test = SeedlingData(train=False, eval=False, split=False) #eval=False

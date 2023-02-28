@@ -23,15 +23,11 @@ BATCH_SIZE = 1
 EPOCHS = 100
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set2_final_best.pth"
-# MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set1_final_eps10.pth"
-# MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set1_final_eps80.pth"
-# MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set2_final_eps10.pth"
-# MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/resnext101_set2_final_best.pth"
-MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/resnext101_allData_final_best.pth"
+# MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/rgbd_weight_estimation/resnext101_paper_final_best.pth"
+MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set1_final_best.pth"
 
 # Read data
-dataset_test = SeedlingData(train=False, eval=False, split=True) #eval=False
+dataset_test = SeedlingData(train=False, eval=False, split=False) #eval=False
 
 test_loader = torch.utils.data.DataLoader(dataset_test, batch_size=BATCH_SIZE, shuffle=True)
 
@@ -136,7 +132,7 @@ def validate_model(net, device, test_loader, epoch):
 #         now = datetime.now()
 #         current_time = now.strftime("%H:%M:%S")
 
-#         with open(('validation_3.txt'), 'a') as f:
+#         with open(('validation_4.txt'), 'a') as f:
 #                 f.write(current_time + ": model: %s accuracy: %f \n" % (model_name, acc))
 
 
