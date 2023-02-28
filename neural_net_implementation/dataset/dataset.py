@@ -9,11 +9,12 @@ import numpy as np
 
 
 # IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/Paper_Dataset/001_Train"
-IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/Paper_Dataset/002_Eval"
+# IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/Paper_Dataset/002_Eval"
 # IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/Paper_Dataset/002_Eval/003_Pear/030_Pear_3"
+IMAGE_PATH_ROOT = "/media/michel_ma/NVMe2/MA_Heinemann_Dataset/003_Test/002_Unknown"
 
 
-SCALING = True
+SCALING = False
 
 SCALING_RANGE = [0.5, 2.0]
 

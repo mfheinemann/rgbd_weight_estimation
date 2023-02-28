@@ -24,7 +24,8 @@ EPOCHS = 100
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/rgbd_weight_estimation/resnext101_paper_final_best.pth"
-MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set1_final_best.pth"
+# MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set1_final_best.pth"
+MODEL_PATH = "/home/michel_ma/MA_Heinemann/catkin_ws/src/trained_models/final/resnext101_set2_final_best.pth"
 
 # Read data
 dataset_test = SeedlingData(train=False, eval=False, split=False) #eval=False
